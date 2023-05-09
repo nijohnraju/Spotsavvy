@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         type: BottomNavigationBarType.fixed,
-        //backgroundColor: blacksavvy,
+        backgroundColor: blacksavvy,
         selectedItemColor: greensavvy,
         unselectedItemColor: whitesavvy,
         onTap: (int index) {
@@ -39,26 +39,26 @@ class _MainPageState extends State<MainPage> {
             currentIndex = index;
           });
         },
-        items:  [
+        items:  const [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: blacksavvy,
+            //backgroundColor: blacksavvy,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.search),
+            icon:  Icon(Icons.search),
             label: 'Search',
-            backgroundColor: whitesavvy,
+            //backgroundColor: whitesavvy,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
+            icon:  Icon(Icons.person),
             label: 'Profile',
-            backgroundColor: whitesavvy,
+            //backgroundColor: whitesavvy,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
+            icon:  Icon(Icons.settings),
             label: 'Settings',
-            backgroundColor: whitesavvy,
+            //backgroundColor: whitesavvy,
           ),
         ],
       ),
