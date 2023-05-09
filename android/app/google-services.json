@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "378101413990",
+    "project_id": "panigale-caab4",
+    "storage_bucket": "panigale-caab4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378101413990:android:fac189218208ab8a4c55a7",
+        "android_client_info": {
+          "package_name": "com.example.panigale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378101413990-nq2imels45tchpb76dt44c2toj3cjela.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUjDmAQOfxj_clQ9oNRLYUcskqy7juAt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378101413990-nq2imels45tchpb76dt44c2toj3cjela.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
