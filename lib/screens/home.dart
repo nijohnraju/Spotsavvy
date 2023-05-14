@@ -7,6 +7,9 @@ import 'package:panigale/screens/profile.dart';
 import 'package:panigale/screens/rent_parking.dart';
 import 'package:panigale/screens/search.dart';
 import 'package:panigale/screens/settings.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -83,6 +86,52 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getCurrentUserName();
+    fetchLocation();
+  }
+    String location = 'reading';
+  String address = 'Enabling Location...';
+
+    Future<void> fetchLocation() async {
+    try {
+      Position position = await _getCurrentLocation();
+      print(position.latitude);
+      location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
+      await GetAddressFromLatLong(position);
+      setState(() {});
+    } catch (e) {
+      print(e.toString());
+      setState(() {
+        location = 'Error getting location';
+      });
+    }
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw 'Location services are disabled';
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw 'Location Permissions are denied';
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      throw 'Location permissions are permanently denied';
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<void> GetAddressFromLatLong(Position position) async {
+    List<Placemark> placemark =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    print(placemark);
+    Placemark place = placemark[0];
+    address = '${place.locality}, ${place.country}';
   }
 
   Future<void> _getCurrentUserName() async {
@@ -146,10 +195,11 @@ class _HomePageState extends State<HomePage> {
                           // Update with live location
 
                           const Text(
-                            'Pizhaku',
+                            '${address}',
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
+                              color: blacksavvy,
                             ),
                           ),
                         ],
