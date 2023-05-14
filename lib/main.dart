@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:panigale/screens/home.dart';
 import 'package:panigale/screens/login.dart';
-//import 'package:google_fonts/google_fonts.dart';
+
 
 var kColorScheme = ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 135, 220, 66));
-// Color greensavvy = const Color.fromARGB(255, 135, 220, 66);
+
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

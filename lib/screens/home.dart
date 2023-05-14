@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:panigale/custom.dart';
+import 'package:panigale/screens/book_parking.dart';
 import 'package:panigale/screens/profile.dart';
+import 'package:panigale/screens/rent_parking.dart';
+import 'package:panigale/screens/search.dart';
 import 'package:panigale/screens/settings.dart';
 
 class MainPage extends StatefulWidget {
@@ -16,7 +19,7 @@ class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
   final screens = [
     const HomePage(),
-    const ProfilePage(),
+    const SearchPage(),
     const ProfilePage(),
     const SettingsPage(),
   ];
@@ -114,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                           const Text(
                             'Hi, ',
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 22,
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
                             ),
@@ -122,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             '$_name!',
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 22,
                               color: blacksavvy,
                               fontWeight: FontWeight.bold,
                             ),
@@ -145,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                           const Text(
                             'Pizhaku',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -208,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ProfilePage()),
+                                builder: (context) => const BookPage()),
                           );
                         },
                         borderRadius: BorderRadius.circular(08),
@@ -218,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(08),
                           ),
                           padding: const EdgeInsets.all(12),
-                          width: 165,
+                         // width: 165,
                           alignment: Alignment.center,
                           child: Text(
                             'Your Parking Spots',
@@ -235,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ProfilePage()),
+                                builder: (context) => const RentPage()),
                           );
                         },
                         borderRadius: BorderRadius.circular(08),
@@ -247,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           padding: const EdgeInsets.all(12),
                           alignment: Alignment.center,
-                          width: 165,
+                          //width: 165,
                           child: Text(
                             'Rent A Parking?',
                             style: TextStyle(
