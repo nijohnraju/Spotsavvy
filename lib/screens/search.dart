@@ -7,7 +7,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: greensavvy),
+      appBar: AppBar(backgroundColor: whitesavvy),
       body: const Center(
         child: Text(
           'Search Your Parking Spot',

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:panigale/custom.dart';
-import 'package:panigale/screens/book_parking.dart';
+import 'package:panigale/screens/bookparking/book_parking.dart';
 import 'package:panigale/screens/profile.dart';
-import 'package:panigale/screens/rent_parking.dart';
+import 'package:panigale/screens/rentparking/rent_parking.dart';
 import 'package:panigale/screens/search.dart';
 import 'package:panigale/screens/settings.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -42,24 +44,24 @@ class _MainPageState extends State<MainPage> {
             currentIndex = index;
           });
         },
-        items:  const [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
             //backgroundColor: blacksavvy,
           ),
           BottomNavigationBarItem(
-            icon:  Icon(Icons.search),
+            icon: Icon(Icons.search),
             label: 'Search',
             //backgroundColor: whitesavvy,
           ),
           BottomNavigationBarItem(
-            icon:  Icon(Icons.person),
+            icon: Icon(Icons.person),
             label: 'Profile',
             //backgroundColor: whitesavvy,
           ),
           BottomNavigationBarItem(
-            icon:  Icon(Icons.settings),
+            icon: Icon(Icons.settings),
             label: 'Settings',
             //backgroundColor: whitesavvy,
           ),
@@ -77,13 +79,92 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // For displaying the hi {name} text
+  String currentAddress = '';
   String? _name;
+  // String location = 'reading';
+  // String address = 'Loading...';
+
   @override
   void initState() {
     super.initState();
     _getCurrentUserName();
+  //   fetchLocation();
+ _getCurrentLocation();
   }
+
+   Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("Location Services are disabled");
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("Location permission are permanently denied");
+    }
+    setState(() {
+      currentAddress = "updating...";
+    });
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+
+    Placemark place = placemarks[0];
+
+    setState(() {
+      currentAddress = "${place.locality}";
+    });
+  }
+
+  // Future<void> fetchLocation() async {
+  //   try {
+  //     Position position = await _getCurrentLocation();
+  //     print(position.latitude);
+  //     location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
+  //     await GetAddressFromLatLong(position);
+  //     setState(() {});
+  //   } catch (e) {
+  //     print(e.toString());
+  //     setState(() {
+  //       location = 'Error getting location';
+  //     });
+  //   }
+  // }
+
+  // Future<Position> _getCurrentLocation() async {
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     throw 'Location services are disabled';
+  //   }
+
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       throw 'Location Permissions are denied';
+  //     }
+  //   }
+  //   if (permission == LocationPermission.deniedForever) {
+  //     throw 'Location permissions are permanently denied';
+  //   }
+
+  //   return await Geolocator.getCurrentPosition();
+  // }
+
+  // Future<void> GetAddressFromLatLong(Position position) async {
+  //   List<Placemark> placemark =
+  //       await placemarkFromCoordinates(position.latitude, position.longitude);
+  //   print(placemark);
+  //   Placemark place = placemark[0];
+  //   address = '${place.locality}, ${place.country}';
+  // }
 
   Future<void> _getCurrentUserName() async {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -106,7 +187,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Row(
@@ -145,9 +226,9 @@ class _HomePageState extends State<HomePage> {
 
                           // Update with live location
 
-                          const Text(
-                            'Pizhaku',
-                            style: TextStyle(
+                           Text(
+                            currentAddress,
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
@@ -157,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   const SizedBox(
-                    height: 35,
+                    height: 30,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -181,27 +262,62 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 20,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: customDecoration(),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Search Your Parking Spot",
-                        border: InputBorder.none,
-                        hintStyle: const TextStyle(
-                          color: Colors.black,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: greensavvy,
-                        ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SearchPage()),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(08),
+                    child: Container(
+                      decoration: customDecoration(),
+                      padding: const EdgeInsets.all(12),
+                      // width: 165,
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: greensavvy,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Search Your Parking Spot',
+                            style: TextStyle(
+                              color: blacksavvy,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                  // Container(
+                  //   margin: const EdgeInsets.only(bottom: 20),
+                  //   decoration: customDecoration(),
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //       hintText: "Search Your Parking Spot",
+                  //       border: InputBorder.none,
+                  //       hintStyle: const TextStyle(
+                  //         color: Colors.black,
+                  //       ),
+                  //       prefixIcon: Icon(
+                  //         Icons.search,
+                  //         color: greensavvy,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(
-                    height: 15,
+                    height: 20,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -221,10 +337,10 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(08),
                           ),
                           padding: const EdgeInsets.all(12),
-                         // width: 165,
+                          // width: 165,
                           alignment: Alignment.center,
                           child: Text(
-                            'Your Parking Spots',
+                            'Booked Parkings',
                             style: TextStyle(
                               color: whitesavvy,
                               fontWeight: FontWeight.bold,
@@ -252,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                           alignment: Alignment.center,
                           //width: 165,
                           child: Text(
-                            'Rent A Parking?',
+                            'Listed Parkings',
                             style: TextStyle(
                               color: blacksavvy,
                               fontWeight: FontWeight.bold,
