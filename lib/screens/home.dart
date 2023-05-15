@@ -7,8 +7,6 @@ import 'package:panigale/screens/profile.dart';
 import 'package:panigale/screens/rentparking/rent_parking.dart';
 import 'package:panigale/screens/search.dart';
 import 'package:panigale/screens/settings.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -88,39 +86,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getCurrentUserName();
-  //   fetchLocation();
- _getCurrentLocation();
-  }
-
-   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error("Location Services are disabled");
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error("Location permission are permanently denied");
-    }
-    setState(() {
-      currentAddress = "updating...";
-    });
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-
-    Placemark place = placemarks[0];
-
-    setState(() {
-      currentAddress = "${place.locality}";
-    });
   }
 
   // Future<void> fetchLocation() async {
@@ -228,9 +193,10 @@ class _HomePageState extends State<HomePage> {
 
                            Text(
                             currentAddress,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              color: blacksavvy,
                             ),
                           ),
                         ],
