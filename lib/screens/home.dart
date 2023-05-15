@@ -7,6 +7,8 @@ import 'package:panigale/screens/profile.dart';
 import 'package:panigale/screens/rentparking/rent_parking.dart';
 import 'package:panigale/screens/search.dart';
 import 'package:panigale/screens/settings.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -79,57 +81,43 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String currentAddress = '';
   String? _name;
-  // String location = 'reading';
-  // String address = 'Loading...';
 
   @override
   void initState() {
     super.initState();
     _getCurrentUserName();
+    _getCurrentLocation();
   }
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("Location Services are disabled");
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("Location permission are permanently denied");
+    }
+    setState(() {
+      currentAddress = "updating...";
+    });
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
-  // Future<void> fetchLocation() async {
-  //   try {
-  //     Position position = await _getCurrentLocation();
-  //     print(position.latitude);
-  //     location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
-  //     await GetAddressFromLatLong(position);
-  //     setState(() {});
-  //   } catch (e) {
-  //     print(e.toString());
-  //     setState(() {
-  //       location = 'Error getting location';
-  //     });
-  //   }
-  // }
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
 
-  // Future<Position> _getCurrentLocation() async {
-  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     throw 'Location services are disabled';
-  //   }
+    Placemark place = placemarks[0];
 
-  //   LocationPermission permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       throw 'Location Permissions are denied';
-  //     }
-  //   }
-  //   if (permission == LocationPermission.deniedForever) {
-  //     throw 'Location permissions are permanently denied';
-  //   }
-
-  //   return await Geolocator.getCurrentPosition();
-  // }
-
-  // Future<void> GetAddressFromLatLong(Position position) async {
-  //   List<Placemark> placemark =
-  //       await placemarkFromCoordinates(position.latitude, position.longitude);
-  //   print(placemark);
-  //   Placemark place = placemark[0];
-  //   address = '${place.locality}, ${place.country}';
-  // }
+    setState(() {
+      currentAddress = "${place.locality}";
+    });
+  }
 
   Future<void> _getCurrentUserName() async {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -265,23 +253,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   margin: const EdgeInsets.only(bottom: 20),
-                  //   decoration: customDecoration(),
-                  //   child: TextField(
-                  //     decoration: InputDecoration(
-                  //       hintText: "Search Your Parking Spot",
-                  //       border: InputBorder.none,
-                  //       hintStyle: const TextStyle(
-                  //         color: Colors.black,
-                  //       ),
-                  //       prefixIcon: Icon(
-                  //         Icons.search,
-                  //         color: greensavvy,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   const SizedBox(
                     height: 20,
                   ),
