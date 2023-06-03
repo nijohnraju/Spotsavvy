@@ -40,8 +40,9 @@ dependencies:
   flutter_svg: ^2.0.5
   geocoding: ^2.1.0
   geolocator: ^9.0.2
-  google_fonts: ^4.0.4
   google_maps_flutter: ^2.2.6
+  lottie: ^2.3.1
+  google_fonts: ^4.0.4
   image_picker: ^0.8.7+5
   intl: ^0.17.0
   uuid: ^3.0.7
@@ -63,6 +64,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/spotsavvylogo.png
+    - assets\animation\running_car.json
   fonts:
     - family: Manrope
       fonts:

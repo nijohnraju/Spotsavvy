@@ -395,7 +395,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
-                              color: const Color.fromARGB(219, 255, 255, 255),
+                              color: const Color.fromARGB(240, 255, 255, 255),
                             ),
                             child: ListTile(
                               title: Text(

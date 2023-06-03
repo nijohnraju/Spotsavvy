@@ -14,7 +14,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
-    super.initState();
+    super.initState;
     fetchLocation();
   }
 
@@ -31,16 +31,16 @@ class _SearchPageState extends State<SearchPage> {
   Future<Position> fetchLocation() async {
     try {
       Position position = await _getCurrentLocation();
-      //print(position.latitude);
+      print(position.latitude);
       location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
       //await GetAddressFromLatLong(position);
       setState(() {});
       return position;
     } catch (e) {
-      //print(e.toString());
-      // setState(() {
-      //   location = 'Error getting location';
-      // });
+      print(e.toString());
+      setState(() {
+        location = 'Error getting location';
+      });
       throw Exception('Error getting location');
     }
   }
@@ -80,7 +80,10 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: whitesavvy,
-          title: const Text('Book A Parking Spot',style: TextStyle(fontWeight: FontWeight.bold),),
+          title: const Text(
+            'Book A Parking Spot',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           centerTitle: true),
       body: GoogleMap(
         initialCameraPosition: initialCameraPosition,
@@ -99,16 +102,13 @@ class _SearchPageState extends State<SearchPage> {
                   target: LatLng(position.latitude, position.longitude),
                   zoom: 14)));
           markers.clear();
-          markers.add(
-            Marker(
-              markerId: const MarkerId('currentLoction'),
-              position: LatLng(position.latitude, position.longitude),
-            ),
-          );
+          markers.add(Marker(
+              markerId: MarkerId('currentLoction'),
+              position: LatLng(position.latitude, position.longitude)));
           setState(() {});
         },
         label: const Text("current location"),
-        icon:  const  Icon(Icons.location_history),
+        icon: const Icon(Icons.location_history),
       ),
     );
   }
