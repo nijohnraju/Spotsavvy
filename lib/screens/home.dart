@@ -346,7 +346,7 @@ class _HomePageState extends State<HomePage> {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('Rentdetails')
-                      //.where('Location.address', isEqualTo: currentAddress)
+                      .where('Location.address', isEqualTo: currentAddress)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {

@@ -31,13 +31,11 @@ class _SearchPageState extends State<SearchPage> {
   Future<Position> fetchLocation() async {
     try {
       Position position = await _getCurrentLocation();
-      print(position.latitude);
       location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
       //await GetAddressFromLatLong(position);
       setState(() {});
       return position;
     } catch (e) {
-      print(e.toString());
       setState(() {
         location = 'Error getting location';
       });
@@ -103,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
                   zoom: 14)));
           markers.clear();
           markers.add(Marker(
-              markerId: MarkerId('currentLoction'),
+              markerId: const MarkerId('currentLoction'),
               position: LatLng(position.latitude, position.longitude)));
           setState(() {});
         },
