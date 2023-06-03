@@ -60,6 +60,7 @@ class _NewParkingState extends State<NewParking> {
       'Amount': amount,
       'Image': downloadUrl,
       'uid': uid,
+      'Book':false,
       'Location': {
         'latitude': location.latitude,
         'longitude': location.longitude,
@@ -96,7 +97,7 @@ class _NewParkingState extends State<NewParking> {
 
     setState(() {
       currentPosition = position;
-      currentAddress = "${place.locality}, ${place.postalCode}";
+      currentAddress = "${place.locality}";
       _pickedLocation = PlaceLocation(
           latitude: position.latitude,
           longitude: position.longitude,

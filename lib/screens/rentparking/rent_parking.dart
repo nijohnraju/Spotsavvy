@@ -12,7 +12,7 @@ class RentPage extends StatefulWidget {
 }
 
 class _RentPageState extends State<RentPage> {
-  void _openAddExpenseOverlay() {
+  void _openAddParkingsOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -40,7 +40,7 @@ class _RentPageState extends State<RentPage> {
       ),
       body: const ParkingItem(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _openAddExpenseOverlay,
+        onPressed: _openAddParkingsOverlay,
         child: const Icon(Icons.add),
       ),
     );

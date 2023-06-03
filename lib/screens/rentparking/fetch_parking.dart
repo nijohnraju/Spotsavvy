@@ -51,7 +51,7 @@ class _ParkingItemState extends State<ParkingItem> {
 
           if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
             return  Center(
-              child: Text('No rent details found.',style: TextStyle(color:greensavvy,fontWeight: FontWeight.bold,),),
+              child: Text('No Parkings Spots Found.',style: TextStyle(color:greensavvy,fontWeight: FontWeight.bold,),),
             );
           }
 
@@ -68,20 +68,20 @@ class _ParkingItemState extends State<ParkingItem> {
               final address = location['address'] ?? '';
 
               return Padding(
-                padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                 child: Card(
                   color: Colors.white,
                   shadowColor: greensavvy,
                   shape: null,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
+                        horizontal: 10, vertical: 10),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             color: blacksavvy,
-                            height: 230,
+                            height: 200,
                             width: double.infinity,
                             alignment: Alignment.center,
                             child: image != null
@@ -98,7 +98,7 @@ class _ParkingItemState extends State<ParkingItem> {
                             title,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 20,
                             ),
                           ),
                           Text(
