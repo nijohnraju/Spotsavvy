@@ -42,11 +42,14 @@ dependencies:
   geolocator: ^9.0.2
   google_fonts: ^4.0.4
   google_maps_flutter: ^2.2.6
-  google_maps_webservice: ^0.0.20
+  google_maps_webservice: ^0.0.19
+  
   image_picker: ^0.8.7+5
   intl: ^0.17.0
   lottie: ^2.3.1
   uuid: ^3.0.7
+  dio: ^4.0.0
+  
 
 dev_dependencies:
   flutter_lints: ^2.0.0
