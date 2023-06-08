@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:panigale/custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:panigale/screens/bookparking/book_parking.dart';
 
 class NewBooking extends StatefulWidget {
   final double bookingFee;
@@ -168,6 +169,11 @@ class _NewBookingState extends State<NewBooking> {
                   onPressed: (){
                     uploadData(title: widget.spotName);
                     Navigator.pop(context);
+                   Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BookPage()),
+                      );
                   },
                   child: const Text(
                     'Book Your Spot',
