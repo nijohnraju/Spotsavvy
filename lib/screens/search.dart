@@ -3,42 +3,61 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:panigale/custom.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  const SearchPage({Key? key});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  @override
-  void initState() {
-    super.initState;
-    fetchLocation();
-  }
-
-  String location = 'reading';
-  String address = 'Enabling Location...';
-
-  late GoogleMapController googleMapController;
-//final Completer<GoogleMapController> _controller = Completer();
-
+  GoogleMapController? googleMapController;
   static const CameraPosition initialCameraPosition =
       CameraPosition(target: LatLng(37.15478, -122.78945), zoom: 14.0);
   Set<Marker> markers = {};
 
-  Future<Position> fetchLocation() async {
+  @override
+  void initState() {
+    super.initState();
+    fetchLocation();
+  }
+
+  Future<void> fetchLocation() async {
     try {
       Position position = await _getCurrentLocation();
-      location = 'Lat: ${position.latitude}, Long: ${position.longitude}';
-      //await GetAddressFromLatLong(position);
-      setState(() {});
-      return position;
-    } catch (e) {
       setState(() {
-        location = 'Error getting location';
+        markers.add(
+          Marker(
+            markerId: const MarkerId('currentLocation'),
+            position: LatLng(position.latitude, position.longitude), // Set marker color to red
+          ),
+        );
       });
+
+      // Fetch locations from the database
+      FirebaseFirestore.instance
+          .collection('Rentdetails')
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          var location = doc.get('Location');
+          var latitude = location['latitude'];
+          var longitude = location['longitude'];
+
+          setState(() {
+            markers.add(
+              Marker(
+                markerId: MarkerId(doc.id),
+                position: LatLng(latitude, longitude),
+                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+              ),
+            );
+          });
+        });
+      });
+    } catch (e) {
       throw Exception('Error getting location');
     }
   }
@@ -63,26 +82,17 @@ class _SearchPageState extends State<SearchPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-/*  Future<void> GetAddressFromLatLong(Position position) async {
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    print(placemark);
-    Placemark place = placemark[0];
-    address = '${place.locality}, ${place.country}';
-  }*/
-
-//static const CameraPosition targetPosition = CameraPosition(target: LatLng(33.15478, -135.78945), zoom: 14.0, bearing: 192.0,tilt: 60);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: whitesavvy,
-          title: const Text(
-            'Book A Parking Spot',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true),
+        backgroundColor: whitesavvy,
+        title: const Text(
+          'Book A Parking Spot',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: GoogleMap(
         initialCameraPosition: initialCameraPosition,
         markers: markers,
@@ -94,18 +104,15 @@ class _SearchPageState extends State<SearchPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          Position position = await fetchLocation();
-          googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
-                  zoom: 14)));
-          markers.clear();
-          markers.add(Marker(
-              markerId: const MarkerId('currentLoction'),
-              position: LatLng(position.latitude, position.longitude)));
-          setState(() {});
+          Position position = await _getCurrentLocation();
+          googleMapController!.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 14,
+            ),
+          ));
         },
-        label: const Text("current location"),
+        label: const Text("Current Location"),
         icon: const Icon(Icons.location_history),
       ),
     );
