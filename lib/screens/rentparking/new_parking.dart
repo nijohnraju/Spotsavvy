@@ -225,7 +225,7 @@ class _NewParkingState extends State<NewParking> {
                     decoration: const InputDecoration(
                       label: Text(
                         'Name ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17),
                       ),
                     ),
                   ),
@@ -245,7 +245,7 @@ class _NewParkingState extends State<NewParking> {
                       prefixText: "₹",
                       label: Text(
                         'Amount / hr',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17),
                       ),
                     ),
                   ),
@@ -274,7 +274,7 @@ class _NewParkingState extends State<NewParking> {
               children: [
                 Text(
                   'Your location : $currentAddress',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 17),
                 ),
                 TextButton.icon(
                   onPressed: _getCurrentLocation,
@@ -283,6 +283,7 @@ class _NewParkingState extends State<NewParking> {
                     'Locate me',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 17
                     ),
                   ),
                 ),
@@ -294,9 +295,9 @@ class _NewParkingState extends State<NewParking> {
                 Expanded(
                   child: CheckboxListTile(
                       title: const Text(
-                        "EV Charging Dock",
+                        "EV Charging ",
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -312,7 +313,7 @@ class _NewParkingState extends State<NewParking> {
                       title:const  Text(
                         "Car Wash",
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -326,6 +327,7 @@ class _NewParkingState extends State<NewParking> {
                 ),
               ],
             ),
+            const SizedBox(height: 25,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -333,11 +335,11 @@ class _NewParkingState extends State<NewParking> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Cancel',style: TextStyle(fontWeight: FontWeight.bold),),
+                  child: const Text('Cancel',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
                 ),
                 ElevatedButton(
                     onPressed: _submitExpenseData,
-                    child: const Text('Save Parking',style: TextStyle(fontWeight: FontWeight.bold),)),
+                    child: const Text('Save Parking',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),)),
               ],
             ),
           ],

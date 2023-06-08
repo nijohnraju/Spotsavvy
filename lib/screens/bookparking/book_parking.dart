@@ -20,6 +20,14 @@ class _BookPageState extends State<BookPage> {
     _getCurrentUserUID();
   }
 
+  Future<void> updateBookingStatus(String docId) async {
+  await FirebaseFirestore.instance
+      .collection('Rentdetails')
+      .doc(docId)
+      .update({'Book': false});
+}
+
+
   Future<void> _getCurrentUserUID() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -58,6 +66,7 @@ class _BookPageState extends State<BookPage> {
         stream: FirebaseFirestore.instance
             .collection('Rentdetails')
             .where('Book_uid', isEqualTo: _uid)
+            .where('Book',isEqualTo: true)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -117,27 +126,60 @@ class _BookPageState extends State<BookPage> {
                                 : const CircularProgressIndicator(),
                           ),
                           const SizedBox(height: 5,),
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                          Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Amount   :   ₹$amount /hr',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Location :   $address ',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Amount   :   ₹$amount /hr',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed:
+                                  (){
+                                    updateBookingStatus(doc.id);
+                                  }
+                                ,
+                                // style: TextButton.styleFrom(
+                                //     elevation:
+                                //         4, // Set the elevation for the shadow effect
+                                //     shadowColor: Colors.black,
+                                //     backgroundColor: Color.fromRGBO(255, 255, 255, 1) // Set the color of the shadow
+                                //     ),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Color.fromARGB(171, 232, 27, 27),
+                                      fontWeight: FontWeight.bold,),
+                                ),
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Location :   $address ',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
+                          ],
+                        ),
                         ]),
                   ),
                 ),

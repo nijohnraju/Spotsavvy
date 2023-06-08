@@ -43,16 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/animation/running_car.json',
-                      width: 300,
-                      height: 300,
-                    ),
-                  ],
-                ),
+            
             const SizedBox(height: 20,),
             Text(
               'User Details',
@@ -60,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: blacksavvy, fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
-              height: 30,
+              height: 40,
             ),
             Row(
               children: [
@@ -72,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontSize: 25),
                 ),
                 const SizedBox(
-                  width: 5,
+                  width: 10,
                 ),
                 Text(
                   _name.toString(),
@@ -84,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Row(
               children: [
@@ -95,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 25),
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 10),
                 Text(
                   user.email!,
                   style: TextStyle(
@@ -106,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Row(
               children: [
@@ -117,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 25),
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 10),
                 Text(
                   _phone.toString(),
                   style: TextStyle(
@@ -126,6 +117,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontSize: 20),
                 ),
               ],
+            ),
+            const SizedBox(height: 50,),
+            Lottie.asset(
+              'assets/animation/running_car.json',
+              width: 300,
+              height: 300,
             ),
           ],
         ),

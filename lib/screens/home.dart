@@ -82,12 +82,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String currentAddress = '';
   String? _name;
+  late String _uid;
 
   @override
   void initState() {
     super.initState();
+    _getCurrentUserUID();
     _getCurrentUserName();
     _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentUserUID() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _uid = user.uid;
+      });
+    }
   }
 
   Future<void> _getCurrentLocation() async {
@@ -347,6 +358,8 @@ class _HomePageState extends State<HomePage> {
                   stream: FirebaseFirestore.instance
                       .collection('Rentdetails')
                       .where('Location.address', isEqualTo: currentAddress)
+                      .where('uid', isNotEqualTo: _uid)
+                      .where('Book',isEqualTo: false)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -387,7 +400,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(top: 20.0),
                           child: Text(
                             'Nearby Parkings',
-                            style: TextStyle(color: whitesavvy, fontSize: 20),
+                            style: TextStyle(color: whitesavvy, fontSize: 20,fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
@@ -404,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                                     fontWeight: FontWeight.bold, fontSize: 17),
                               ),
                               subtitle: Text(
-                                '\$$amount\n$address',
+                                '₹$amount/hr\n$address',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
