@@ -250,7 +250,12 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ));
         },
-        label: const Text("Current Location"),
+        label: const Text(
+          "Current Location",
+          style: TextStyle(color: Color.fromARGB(255, 23, 0, 235),
+          fontWeight: FontWeight.bold),
+        ),
+      
       ),
     );
   }
