@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
   Set<Marker> markers = {};
   Set<Polyline> polylines = {};
   TextEditingController searchController = TextEditingController();
-  LatLng? searchedLocation;
+  List<PlaceSuggestion> suggestions = [];
 
   @override
   void initState() {
@@ -159,45 +159,15 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> searchPlace() async {
-    String query = searchController.text;
-    List<Location> locations = await locationFromAddress(query);
-
-    if (locations.isNotEmpty) {
-      Location location = locations.first;
-      setState(() {
-        searchedLocation = LatLng(location.latitude, location.longitude);
-        markers.add(
-          Marker(
-            markerId: const MarkerId('searchedLocation'),
-            position: searchedLocation!,
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            onTap: () {
-              setState(() {});
-              fetchDirections(
-                markers.elementAt(0).position.latitude,
-                markers.elementAt(0).position.longitude,
-                searchedLocation!.latitude,
-                searchedLocation!.longitude,
-              );
-            },
-          ),
-        );
-        googleMapController!.animateCamera(CameraUpdate.newLatLngBounds(
-          LatLngBounds(
-            southwest: LatLng(
-              searchedLocation!.latitude - 0.05,
-              searchedLocation!.longitude - 0.05,
-            ),
-            northeast: LatLng(
-              searchedLocation!.latitude + 0.05,
-              searchedLocation!.longitude + 0.05,
-            ),
-          ),
-          0,
-        ));
-      });
-    }
+  String searchText = searchController.text;
+  List<Location> locations = await locationFromAddress(searchText);
+  if (locations.isNotEmpty) {
+    Location location = locations[0];
+    LatLng latLng = LatLng(location.latitude, location.longitude);
+    googleMapController!.animateCamera(CameraUpdate.newLatLng(latLng));
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +205,7 @@ class _SearchPageState extends State<SearchPage> {
                     Expanded(
                       child: TextField(
                         controller: searchController,
+                        onChanged: (value) => _updatePlaceSuggestions(value),
                         decoration: const InputDecoration(
                           hintText: 'Search for a place',
                           border: InputBorder.none,
@@ -250,6 +221,23 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
           ),
+          if (suggestions.isNotEmpty)
+            Positioned(
+              top: 60,
+              left: 10,
+              right: 10,
+              child: Card(
+                elevation: 6,
+                child: Column(
+                  children: suggestions
+                      .map((suggestion) => ListTile(
+                            title: Text(suggestion.description),
+                            onTap: () => _selectPlaceSuggestion(suggestion),
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -266,4 +254,55 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+
+  void _updatePlaceSuggestions(String value) async {
+    List<PlaceSuggestion> newSuggestions = await _getPlaceSuggestions(value);
+    setState(() {
+      suggestions = newSuggestions;
+    });
+  }
+
+  Future<List<PlaceSuggestion>> _getPlaceSuggestions(String query) async {
+    String apiKey = 'AIzaSyDC6Itbcw16HH1H7-eQymYXU7ejd1WPQeI';
+    String url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=$apiKey';
+
+    http.Response response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        List<PlaceSuggestion> suggestions = [];
+        for (var prediction in data['predictions']) {
+          String description = prediction['description'];
+          suggestions.add(PlaceSuggestion(description));
+        }
+        return suggestions;
+      } else {
+        print('Error fetching place suggestions: ${data['error_message']}');
+        return [];
+      }
+    } else {
+      print('Error fetching place suggestions. Status code: ${response.statusCode}');
+      return [];
+    }
+  }
+
+void _selectPlaceSuggestion(PlaceSuggestion suggestion) async {
+  searchController.text = suggestion.description;
+  List<Location> locations = await locationFromAddress(suggestion.description);
+  if (locations.isNotEmpty) {
+    Location location = locations[0];
+    LatLng latLng = LatLng(location.latitude, location.longitude);
+    googleMapController!.animateCamera(CameraUpdate.newLatLng(latLng));
+  }
+  setState(() {
+    suggestions = [];
+  });
+}
+}
+
+class PlaceSuggestion {
+  final String description;
+
+  PlaceSuggestion(this.description);
 }
