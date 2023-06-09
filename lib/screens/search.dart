@@ -209,6 +209,9 @@ class _SearchPageState extends State<SearchPage> {
                         decoration: const InputDecoration(
                           hintText: 'Search for a place',
                           border: InputBorder.none,
+                          hintStyle: TextStyle(
+                           fontWeight: FontWeight.bold, // Set the hint text font weight to bold
+                           ),
                         ),
                       ),
                     ),
