@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key});
@@ -19,6 +20,8 @@ class _SearchPageState extends State<SearchPage> {
       CameraPosition(target: LatLng(37.15478, -122.78945), zoom: 14.0);
   Set<Marker> markers = {};
   Set<Polyline> polylines = {};
+  TextEditingController searchController = TextEditingController();
+  LatLng? searchedLocation;
 
   @override
   void initState() {
@@ -155,6 +158,47 @@ class _SearchPageState extends State<SearchPage> {
     return polylinePoints;
   }
 
+  Future<void> searchPlace() async {
+    String query = searchController.text;
+    List<Location> locations = await locationFromAddress(query);
+
+    if (locations.isNotEmpty) {
+      Location location = locations.first;
+      setState(() {
+        searchedLocation = LatLng(location.latitude, location.longitude);
+        markers.add(
+          Marker(
+            markerId: const MarkerId('searchedLocation'),
+            position: searchedLocation!,
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            onTap: () {
+              setState(() {});
+              fetchDirections(
+                markers.elementAt(0).position.latitude,
+                markers.elementAt(0).position.longitude,
+                searchedLocation!.latitude,
+                searchedLocation!.longitude,
+              );
+            },
+          ),
+        );
+        googleMapController!.animateCamera(CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: LatLng(
+              searchedLocation!.latitude - 0.05,
+              searchedLocation!.longitude - 0.05,
+            ),
+            northeast: LatLng(
+              searchedLocation!.latitude + 0.05,
+              searchedLocation!.longitude + 0.05,
+            ),
+          ),
+          0,
+        ));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,15 +210,47 @@ class _SearchPageState extends State<SearchPage> {
         ),
         centerTitle: true,
       ),
-      body: GoogleMap(
-        initialCameraPosition: initialCameraPosition,
-        markers: markers,
-        polylines: polylines,
-        zoomControlsEnabled: false,
-        mapType: MapType.normal,
-        onMapCreated: (GoogleMapController controller) {
-          googleMapController = controller;
-        },
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: initialCameraPosition,
+            markers: markers,
+            polylines: polylines,
+            zoomControlsEnabled: false,
+            mapType: MapType.normal,
+            onMapCreated: (GoogleMapController controller) {
+              googleMapController = controller;
+            },
+          ),
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            child: Card(
+              elevation: 6,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Search for a place',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: searchPlace,
+                      icon: const Icon(Icons.search),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
